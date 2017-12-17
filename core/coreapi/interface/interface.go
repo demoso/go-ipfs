@@ -5,6 +5,8 @@ import (
 	"errors"
 	"io"
 
+	options "github.com/ipfs/go-ipfs/core/coreapi/interface/options"
+
 	cid "gx/ipfs/QmNp85zy9RLrQ5oQD4hPyS39ezrrXpcaa7R4Y9kxdWQLLQ/go-cid"
 	ipld "gx/ipfs/QmPN7cwmpcc4DWXb4KTB9dNAJgjuPY69h3npsMfhRrQL9c/go-ipld-format"
 )
@@ -44,14 +46,31 @@ type UnixfsAPI interface {
 type DagAPI interface {
 	// Put inserts data using specified format and input encoding.
 	// If format is not specified (nil), default dag-cbor/sha256 is used
-	Put(ctx context.Context, src io.Reader, inputEnc string, format *cid.Prefix) ([]Node, error) //TODO: make format optional
+	Put(ctx context.Context, src io.Reader, opts ...options.DagPutOption) ([]Node, error)
+
+	// WithInputEnc is an option for Put which specifies the input encoding of the
+	// data. Default is "json", most formats/codecs support "raw"
+	WithInputEnc(enc string) options.DagPutOption
+
+	// WithCodec is an option for Put which specifies the multicodec to use to
+	// serialize the object. Default is cid.DagCBOR (0x71)
+	WithCodec(codec uint64) options.DagPutOption
+
+	// WithHash is an option for Put which specifies the multihash settings to use
+	// when hashing the object. Default is based on the codec used
+	// (mh.SHA2_256 (0x12) for DagCBOR). If mhLen is set to -1, default length for
+	// the hash will be used
+	WithHash(mhType uint64, mhLen int) options.DagPutOption
 
 	// Get attempts to resolve and get the node specified by the path
 	Get(ctx context.Context, path Path) (Node, error)
 
 	// Tree returns list of paths within a node specified by the path.
-	// To get all paths in a tree, set depth to -1
-	Tree(ctx context.Context, path Path, depth int) ([]Path, error)
+	Tree(ctx context.Context, path Path, opts ...options.DagTreeOption) ([]Path, error)
+
+	// WithDepth is an option for Tree which specifies maximum depth of the
+	// returned tree. Default is -1 (no depth limit)
+	WithDepth(depth int) options.DagTreeOption
 }
 
 // type ObjectAPI interface {

@@ -83,8 +83,9 @@ type NameAPI interface {
 
 	// WithKey is an option for Publish which specifies the key to use for
 	// publishing. Default value is "self" which is the node's own PeerID.
+	// The key parameter must be either PeerID or keystore key alias.
 	//
-	// You can use .Key API to list and generate more names and their respective keys.
+	// You can use KeyAPI to list and generate more names and their respective keys.
 	WithKey(key string) options.NamePublishOption
 
 	// Resolve attempts to resolve the newest version of the specified name
@@ -110,11 +111,11 @@ type KeyAPI interface {
 	Generate(ctx context.Context, name string, opts ...options.KeyGenerateOption) (string, error)
 
 	// WithAlgorithm is an option for Generate which specifies which algorithm
-	// should be used for the key. Default is "rsa"
+	// should be used for the key. Default is options.RSAKey
 	//
 	// Supported algorithms:
-	// * rsa
-	// * ed25519
+	// * options.RSAKey
+	// * options.Ed25519Key
 	WithAlgorithm(algorithm string) options.KeyGenerateOption
 
 	// WithSize is an option for Generate which specifies the size of the key to

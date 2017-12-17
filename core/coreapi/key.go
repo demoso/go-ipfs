@@ -96,7 +96,7 @@ func (api *KeyAPI) List(ctx context.Context) (map[string]string, error) {
 
 func (api *KeyAPI) Rename(ctx context.Context, oldName string, newName string, opts ...caopts.KeyRenameOption) (string, bool, error) {
 	options, err := caopts.KeyRenameOptions(opts...)
-	if newName == "self" {
+	if err != nil {
 		return "", false, err
 	}
 

@@ -4,6 +4,10 @@ import (
 	"time"
 )
 
+const (
+	DefaultNameValidTime = 24 * time.Hour
+)
+
 type NamePublishSettings struct {
 	ValidTime time.Duration
 	Key       string
@@ -20,7 +24,7 @@ type NameResolveOption func(*NameResolveSettings) error
 
 func NamePublishOptions(opts ...NamePublishOption) (*NamePublishSettings, error) {
 	options := &NamePublishSettings{
-		ValidTime: 24 * time.Hour,
+		ValidTime: DefaultNameValidTime,
 		Key:       "self",
 	}
 

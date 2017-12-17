@@ -42,10 +42,6 @@ func (api *NameAPI) Publish(ctx context.Context, p coreiface.Path, opts ...caopt
 		return nil, errors.New("cannot manually publish while IPNS is mounted")
 	}
 
-	if n.Identity == "" {
-		return nil, errors.New("identity not loaded")
-	}
-
 	pth, err := ipath.ParsePath(p.String())
 	if err != nil {
 		return nil, err

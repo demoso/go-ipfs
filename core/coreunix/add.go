@@ -443,9 +443,24 @@ func (adder *Adder) addFile(file files.File) error {
 		if err != nil {
 			return err
 		}
-		if err := mr.Flush(); err != nil {
+		dir, ok := mr.GetValue().(*mfs.Directory)
+		if !ok {
+			return fmt.Errorf("invalid mfs structure, root should be a directory")
+		}
+
+		if err := dir.Flush(); err != nil {
 			return err
 		}
+
+		names, err := dir.ListNames(adder.ctx)
+		if err != nil {
+			return err
+		}
+
+		for _, name := range names {
+			dir.Uncache(name)
+		}
+
 		adder.liveNodes = 0
 	}
 	adder.liveNodes++
